@@ -248,7 +248,8 @@ class Sketch {
     }
 
     frameRate(fps) {
-        this.fps = fps;
+        if (fps) this.fps = fps;
+        else return this._frames_last;
     }
 
     clearAll() {
@@ -301,22 +302,36 @@ class Sketch {
     }
 
     stroke(r, g, b, a) {
-        if (r === null || r === undefined) return this.noStroke();
-        if (typeof r == 'string') {
-            this.currentCtx.strokeStyle = r;
-        } else if (typeof r == 'number' && b == undefined) {
-            this.currentCtx.strokeStyle = "rgba(" + r + ',' + r + ',' + r + ',' + (g / 100 || "1") + ")";
-        } else if (typeof r == 'number' && b != undefined) {
-            this.currentCtx.strokeStyle = "rgba(" + r + ',' + g + ',' + b + ',' + (a / 100 || "1") + ")";
-        } else if (typeof r == 'object') {
-            this.currentCtx.strokeStyle = "rgba(" + r.r + ',' + r.g + ',' + r.b + ',' + r.a + ")";
-        }
+        if ((r === null || r === undefined) && r !== 0) return this.noStroke();
+        this._set("strokeStyle", r, g, b, a);
         this.currentCtx.doStroke = true;
+    }
+
+    fill(r, g, b, a) {
+        if ((r === null || r === undefined) && r !== 0) return this.noFill();
+        this._set("fillStyle", r, g, b, a);
+        this.currentCtx.doFill = true;
+    }
+
+    _set(property, r, g, b, a) {
+        if (typeof r == 'string') this.currentCtx[property] = r;
+        else if (typeof r == 'number') {
+            if (this._colormode == 'hsl')
+                this.currentCtx[property] = `${this._colormode}a(${r}, ${typeof b == 'number' ? g : r}%, ${typeof b == 'number' ? b : r}%, ${typeof a == 'number' ? a : ((typeof g == 'number' && typeof b != 'number') ? g : 1)})`;
+            else
+                this.currentCtx[property] = `${this._colormode}a(${r}, ${typeof b == 'number' ? g : r}, ${typeof b == 'number' ? b : r}, ${typeof a == 'number' ? a : ((typeof g == 'number' && typeof b != 'number') ? g : 1)})`;
+        }
+        else if (typeof r == 'object') {
+            if (r.mode == 'hsl')
+                this.currentCtx[property] = `hsla(${r.h}, ${r.s}, ${r.l}, ${r.a})`;
+            else
+                this.currentCtx[property] = `rgba(${r.r}, ${r.g}, ${r.b}, ${r.a})`;
+        }
     }
 
     colorMode(mode) {
         if (mode === 0 || mode == "rgb") this._colormode = "rgb";
-        else if (mode === 1 || mode == "hsb") this._colormode = "hsb";
+        else if (mode === 1 || mode == "hsl") this._colormode = "hsl";
     }
 
     strokeWeight(weight) {
@@ -326,20 +341,6 @@ class Sketch {
 
     noStroke() {
         this.currentCtx.doStroke = false;
-    }
-
-    fill(r, g, b, a) {
-        if (r === null || r === undefined) return this.noFill();
-        if (typeof r == 'string') {
-            this.currentCtx.fillStyle = r;
-        } else if (typeof r == 'number' && b == null) {
-            this.currentCtx.fillStyle = this._colormode + "a(" + r + ',' + r + ',' + r + ',' + (g / 100 || "1") + ")";
-        } else if (typeof r == 'number' && b != null) {
-            this.currentCtx.fillStyle = this._colormode + "a(" + r + ',' + g + ',' + b + ',' + (a / 100 || "1") + ")";
-        } else if (typeof r == 'object') {
-            this.currentCtx.fillStyle = this._colormode + "a(" + r.r + ',' + r.g + ',' + r.b + ',' + r.a + ")";
-        }
-        this.currentCtx.doFill = true;
     }
 
     noFill() {
@@ -456,11 +457,10 @@ var mouse = null;
 var width = window.innerWidth; var height = window.innerHeight;
 
 function Color(r, g, b, a) {
-    if (typeof r == 'number' && b == null) {
-        return { r, g: r, b: r, a: g / 100 || "1" };
-    } else if (typeof r == 'number' && b != null) {
-        return { r, g, b, a: a / 100 || "1" }
-    }
+    return { mode: 'rgb', r, g: (typeof b == 'number' ? g : r), b: (typeof b == 'number' ? b : r), a: (typeof a == 'number' ? a : ((typeof g == 'number' && typeof b != 'number') ? g : 1)) }
+}
+function hueColor(h, s, l, a) {
+    return { mode: 'hsl', h, s: (typeof l == 'number' ? s : h) + '%', l: (typeof l == 'number' ? l : h) + '%', a: (typeof a == 'number' ? a : ((typeof s == 'number' && typeof l != 'number') ? s : 1)) }
 }
 
 function loadImage(src, f) {
