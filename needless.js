@@ -654,7 +654,7 @@ yellow = '#ffff00';
 yellowgreen = '#9acd32';
 
 class Vector {
-    constructor(x, y) {
+    constructor(x = 0, y = 0) {
         this.x = x;
         this.y = y;
     }
@@ -851,8 +851,8 @@ class Entity {
 
     }
 
-    remove(entity) {
-        this.holder.entities = this.holder.entities.filter(entity !== this);
+    remove() {
+        this.holder.entities = this.holder.entities.filter(entity => entity !== this);
     }
 
     static add(entity, sketch) {
