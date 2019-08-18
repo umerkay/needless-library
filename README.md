@@ -5,7 +5,7 @@ Needless aims to make the process of working with canvases in JavaScript much si
 # Setting Up
 ## The HTML
 Including needless into your project is very simple. Just copy the code below and paste it into your .html file. This will fetch the library file through CDN and make it available for use. If you prefer to work with the library locally you may download the file and replace the link with the path of the file on your computer
-```
+```html
 <script src="https://cdn.jsdelivr.net/gh/umerkk164/needless-library@master/needless.js"></script>
 ```
 
@@ -52,6 +52,6 @@ Sketches.loop();
 
 *Note that we include Sketches.loop(); at the end to tell all our sketches to start using the loop function we provided. This will make more sense when working with more than one sketch.*
 
-#Now What?
+# Now What?
 The possibilities from here are endless for you. But to fuel these adventures you will need to learn more about the library. You can refer to the documents below to learn more about how each module works. For now the first two documents will be enough and you can read the rest as you go.
 [Needless Website](https://umerkk164.github.io/needlessjs/)
