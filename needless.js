@@ -248,7 +248,10 @@ class Sketch {
     }
 
     frameRate(fps) {
-        if (fps) this.fps = fps;
+        if (fps) {
+            this.fps = fps;
+            this._fpsInterval = 1000 / this.fps;
+        }
         else return this._frames_last;
     }
 
