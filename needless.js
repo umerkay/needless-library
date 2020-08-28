@@ -403,8 +403,8 @@ class Sketch {
         this.currentCtx.closePath();
     }
 
-    text(string, x, y) {
-        this.currentCtx.textAlign = "center";
+    text(string, x, y, align = "center") {
+        this.currentCtx.textAlign = align;
         this.currentCtx.font = "bold 15px Arial";
         this.currentCtx.fillText(string, x, y + 15 / 3);
     }
